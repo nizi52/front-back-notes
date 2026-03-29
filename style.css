@@ -1,0 +1,173 @@
+/* ── Reset & base ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --accent:   #4f46e5;
+  --accent-h: #4338ca;
+  --danger:   #ef4444;
+  --bg:       #f5f5f7;
+  --card:     #ffffff;
+  --text:     #1e1e2e;
+  --muted:    #6b7280;
+  --border:   #e5e7eb;
+  --radius:   12px;
+  --shadow:   0 2px 12px rgba(0,0,0,.08);
+}
+
+body {
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100dvh;
+}
+
+/* ── Header ── */
+.header {
+  background: var(--accent);
+  color: #fff;
+  padding: 0 1rem;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  box-shadow: 0 2px 8px rgba(79,70,229,.3);
+}
+.header-inner {
+  max-width: 640px;
+  margin: 0 auto;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.logo { font-size: 1.25rem; font-weight: 700; letter-spacing: -.3px; }
+
+/* ── Offline badge ── */
+.badge {
+  background: #fbbf24;
+  color: #1e1e2e;
+  font-size: .72rem;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 999px;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+.hidden { display: none !important; }
+
+/* ── Main ── */
+.main {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 1.5rem 1rem 3rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+/* ── Form ── */
+.note-form {
+  display: flex;
+  gap: .5rem;
+}
+.note-input {
+  flex: 1;
+  padding: .7rem 1rem;
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  font-size: 1rem;
+  outline: none;
+  transition: border-color .2s;
+  background: var(--card);
+}
+.note-input:focus { border-color: var(--accent); }
+
+.btn-add {
+  padding: .7rem 1.25rem;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background .2s;
+}
+.btn-add:hover { background: var(--accent-h); }
+
+/* ── Notes header ── */
+.notes-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.notes-title { font-size: 1rem; font-weight: 600; color: var(--muted); }
+.btn-clear {
+  font-size: .8rem;
+  color: var(--danger);
+  background: none;
+  border: 1px solid var(--danger);
+  border-radius: 8px;
+  padding: 3px 10px;
+  cursor: pointer;
+  transition: background .15s, color .15s;
+}
+.btn-clear:hover { background: var(--danger); color: #fff; }
+
+/* ── Notes list ── */
+.notes-list { list-style: none; display: flex; flex-direction: column; gap: .6rem; }
+
+.note-item {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: .85rem 1rem;
+  box-shadow: var(--shadow);
+  animation: slide-in .2s ease;
+}
+@keyframes slide-in {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.note-text {
+  flex: 1;
+  font-size: .97rem;
+  line-height: 1.4;
+  word-break: break-word;
+}
+.note-text.done {
+  text-decoration: line-through;
+  color: var(--muted);
+}
+
+.note-check {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  accent-color: var(--accent);
+  flex-shrink: 0;
+}
+
+.btn-delete {
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-size: 1.1rem;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 6px;
+  transition: color .15s, background .15s;
+  flex-shrink: 0;
+}
+.btn-delete:hover { color: var(--danger); background: #fee2e2; }
+
+/* ── Empty state ── */
+.empty-state {
+  text-align: center;
+  color: var(--muted);
+  padding: 2.5rem 1rem;
+  font-size: .95rem;
+}

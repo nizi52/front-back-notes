@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="manifest" href="/manifest.json">
+
+    <meta name="mobile-web-app-capable" comtent="yes">
+
+    <meta name="theme-color" content="#4f46e5">
+
+    <link rel="apple-touch-icon" href="">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Заметки">
+
+    <title>Мои заметки</title>
+    <link rel="icon" href="" type="">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app">
+        <header class="header">
+            <div class="header-inner">
+                <h1 class="logo">📝 Мои заметки</h1>
+                <span id="offline-badge" class="badge hidden">Офлайн</span>
+            </div>
+        </header>
+        
+        <main class="main">
+            <form id="note-form" class="note-form">
+                <input
+                id="note-input"
+                class="note-input"
+                type="text"
+                placeholder="Введите заметку..."
+                autocomplete="off"
+                required
+                >
+                <button class="btn-add" type="submit">Добавить</button>
+            </form>
+
+            <div class="notes-header">
+                <h2 class="notes-title">Список заметок</h2>
+                <button id="clear-btn" class="btn-clear">Очистить всё</button>
+            </div>
+
+            <ul id="notes-list" class="notes-list"></ul>
+
+            <p id="empty-state" class="empty-state hidden">
+                Заметок пока нет. Добавьте первую!
+            </p>
+        </main>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

@@ -1,4 +1,5 @@
-const CACHE_NAME = 'notes-cache-v2';
+const CACHE_NAME         = 'notes-cache-v3';
+const DYNAMIC_CACHE_NAME = 'dynamic-content-v1';
 
 const ASSETS = [
   '/',
@@ -17,55 +18,71 @@ const ASSETS = [
   '/icons/icon-512x512.png'
 ];
 
-self.addEventListener('install', (event) => {
+self.addEventListener('install', event => {
   console.log('[SW] Install');
   event.waitUntil(
     caches.open(CACHE_NAME)
-      .then((cache) => {
-        console.log('[SW] Кэшируем ресурсы');
-        return cache.addAll(ASSETS);
-      })
+      .then(cache => cache.addAll(ASSETS))
       .then(() => self.skipWaiting())
   );
 });
 
-self.addEventListener('activate', (event) => {
+self.addEventListener('activate', event => {
   console.log('[SW] Activate');
   event.waitUntil(
-    caches.keys().then((keys) =>
-      Promise.all(
+    caches.keys()
+      .then(keys => Promise.all(
         keys
-          .filter((key) => key !== CACHE_NAME)
-          .map((key) => {
-            console.log('[SW] Удаляем старый кэш:', key);
-            return caches.delete(key);
-          })
-      )
-    ).then(() => self.clients.claim())
+          .filter(k => k !== CACHE_NAME && k !== DYNAMIC_CACHE_NAME)
+          .map(k => caches.delete(k))
+      ))
+      .then(() => self.clients.claim())
   );
 });
 
-self.addEventListener('fetch', (event) => {
-  if (event.request.method !== 'GET') return;
+self.addEventListener('fetch', event => {
+  const url = new URL(event.request.url);
+
+  if (url.origin !== location.origin) return;
+
+  if (url.pathname.startsWith('/content/')) {
+    event.respondWith(
+      fetch(event.request)
+        .then(networkRes => {
+          const clone = networkRes.clone();
+          caches.open(DYNAMIC_CACHE_NAME).then(c => c.put(event.request, clone));
+          return networkRes;
+        })
+        .catch(() =>
+          caches.match(event.request)
+            .then(cached => cached || caches.match('/content/home.html'))
+        )
+    );
+    return;
+  }
 
   event.respondWith(
-    caches.match(event.request).then((cached) => {
-      if (cached) {
-        return cached;
-      }
-      return fetch(event.request).then((networkResponse) => {
-        if (networkResponse && networkResponse.status === 200) {
-          const responseClone = networkResponse.clone();
-          caches.open(CACHE_NAME).then((cache) => {
-            cache.put(event.request, responseClone);
-          });
+    caches.match(event.request)
+      .then(cached => cached || fetch(event.request).then(res => {
+        if (res && res.status === 200) {
+          const clone = res.clone();
+          caches.open(CACHE_NAME).then(c => c.put(event.request, clone));
         }
-        return networkResponse;
-      }).catch(() => {
-        if (event.request.headers.get('accept').includes('text/html')) {
-          return caches.match('/index.html');
-        }
-      });
+        return res;
+      }))
+  );
+});
+
+self.addEventListener('push', event => {
+  let data = { title: 'Новая заметка', body: '' };
+  if (event.data) {
+    try { data = event.data.json(); } catch { data.body = event.data.text(); }
+  }
+  event.waitUntil(
+    self.registration.showNotification(data.title, {
+      body:  data.body,
+      icon:  '/icons/icon-192x192.png',
+      badge: '/icons/icon-96x96.png'
     })
   );
 });

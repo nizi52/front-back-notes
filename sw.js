@@ -19,7 +19,6 @@ const ASSETS = [
 ];
 
 self.addEventListener('install', event => {
-  console.log('[SW] Install');
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(cache => cache.addAll(ASSETS))
@@ -28,7 +27,6 @@ self.addEventListener('install', event => {
 });
 
 self.addEventListener('activate', event => {
-  console.log('[SW] Activate');
   event.waitUntil(
     caches.keys()
       .then(keys => Promise.all(
@@ -43,8 +41,13 @@ self.addEventListener('activate', event => {
 self.addEventListener('fetch', event => {
   const url = new URL(event.request.url);
 
+  /* Пропускаем не-GET запросы — Cache API не поддерживает POST/PUT */
+  if (event.request.method !== 'GET') return;
+
+  /* Пропускаем внешние запросы (Socket.IO сервер, CDN) */
   if (url.origin !== location.origin) return;
 
+  /* Динамический контент (/content/*) — Network First */
   if (url.pathname.startsWith('/content/')) {
     event.respondWith(
       fetch(event.request)
@@ -61,6 +64,7 @@ self.addEventListener('fetch', event => {
     return;
   }
 
+  /* Всё остальное — Cache First */
   event.respondWith(
     caches.match(event.request)
       .then(cached => cached || fetch(event.request).then(res => {
@@ -73,6 +77,7 @@ self.addEventListener('fetch', event => {
   );
 });
 
+/* Push уведомления */
 self.addEventListener('push', event => {
   let data = { title: 'Новая заметка', body: '' };
   if (event.data) {

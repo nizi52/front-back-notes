@@ -18,6 +18,7 @@
 </head>
 <body>
 
+  <!-- APP SHELL: кэшируется, грузится мгновенно -->
   <div class="app">
     <header class="header">
       <div class="header-inner">
@@ -30,6 +31,7 @@
       </nav>
     </header>
 
+    <!-- Динамический контент загружается сюда -->
     <main id="app-content" class="main">
       <div class="skeleton">
         <div class="skeleton-line wide"></div>
@@ -44,7 +46,12 @@
     </footer>
   </div>
 
-  <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+  <script>
+  fetch("/vapid-public-key")
+    .then(r => r.json())
+    .then(data => window.VAPID_PUBLIC_KEY = data.key);
+</script>
+<script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
   <script src="/app.js"></script>
 </body>
 </html>

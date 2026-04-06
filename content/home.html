@@ -10,6 +10,22 @@
     <button class="btn-add" type="submit">Добавить</button>
   </form>
 
+  <form id="reminder-form" class="note-form reminder-form">
+    <input
+      id="reminder-text"
+      class="note-input"
+      type="text"
+      placeholder="Текст напоминания…"
+      autocomplete="off"
+    >
+    <input
+      id="reminder-time"
+      class="note-input reminder-time"
+      type="datetime-local"
+    >
+    <button class="btn-add btn-reminder" type="submit">⏰ С напоминанием</button>
+  </form>
+
   <div class="notes-header">
     <h2 class="notes-title">Список заметок</h2>
     <button id="clear-btn" class="btn-clear">Очистить всё</button>
